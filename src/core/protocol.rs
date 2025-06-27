@@ -1,5 +1,6 @@
 use std::{path::PathBuf, sync::Arc};
 
+use anyhow::bail;
 use dashmap::DashMap;
 use facet_pretty::FacetPretty;
 use futures_lite::future::Boxed as BoxedFuture;
@@ -123,13 +124,13 @@ impl PoofProtocol {
                     .await?;
             }
             Some(ResponseCode::NotFound) => {
-                tracing::warn!("Ticket not found for query: {}", query);
+                bail!("Ticket not found for query: {}", query)
             }
             Some(ResponseCode::Error) => {
-                tracing::error!("An error occurred while processing the request");
+                bail!("An error occurred while processing the request");
             }
             None => {
-                tracing::error!("Received invalid response code");
+                bail!("Received invalid response code");
             }
         }
 
