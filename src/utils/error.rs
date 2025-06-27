@@ -19,10 +19,6 @@ pub enum PoofError {
     #[diagnostic(code(punch::toml))]
     Toml(#[from] facet_toml::TomlSerError),
 
-    #[error(transparent)]
-    #[diagnostic(code(punch::inquire))]
-    Inquire(#[from] inquire::InquireError),
-
     #[error("An error occurred: {message}")]
     #[diagnostic(code(punch::error))]
     Error {

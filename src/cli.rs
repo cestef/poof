@@ -1,7 +1,6 @@
-use std::path::PathBuf;
-
 use clap::{Parser, Subcommand};
-use iroh_blobs::ticket::BlobTicket;
+use iroh::PublicKey;
+use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 pub struct Opts {
@@ -26,9 +25,20 @@ pub enum Command {
     /// Catch a file (receive)
     #[clap(alias = "c")]
     Catch {
-        /// The ticket for the file to catch
-        ticket: BlobTicket,
+        /// Host identifier or alias
+        host: String,
+
+        /// File identifier or ticket
+        query: String,
+
+        /// Optional destination path
+        #[clap(long, short = 'o')]
+        output: Option<PathBuf>,
     },
+
+    /// Host management commands
+    #[clap(subcommand, aliases = ["h", "hosts"])]
+    Host(HostCommand),
 
     /// Key management commands
     #[clap(subcommand, aliases = ["k", "keys"])]
@@ -36,25 +46,115 @@ pub enum Command {
 }
 
 #[derive(Subcommand, Debug)]
+pub enum HostCommand {
+    /// Add a new host
+    #[clap(alias = "a")]
+    Add {
+        /// Alias for the host
+        alias: String,
+        /// Public key of the host
+        public_key: PublicKey,
+        /// Optional description
+        #[clap(long, short = 'd')]
+        description: Option<String>,
+    },
+
+    /// Remove a host
+    #[clap(alias = "r")]
+    Remove {
+        /// Alias of the host to remove
+        alias: String,
+    },
+
+    /// List all hosts
+    #[clap(alias = "l")]
+    List {
+        /// Show detailed information
+        #[clap(long)]
+        verbose: bool,
+    },
+
+    /// Show host details
+    #[clap(alias = "s")]
+    Show {
+        /// Alias of the host to show
+        alias: String,
+    },
+
+    /// Rename a host
+    #[clap(alias = "rn")]
+    Rename {
+        /// Current alias
+        old_alias: String,
+        /// New alias
+        new_alias: String,
+    },
+}
+
+#[derive(Subcommand, Debug)]
 pub enum KeyCommand {
     /// Generate a new key
+    #[clap(alias = "g")]
     Generate {
-        /// The name of the key to generate
+        /// Name for the key
+        name: String,
+        /// Optional description
+        #[clap(long, short = 'd')]
+        description: Option<String>,
+        /// Set as default key
+        #[clap(long)]
+        default: bool,
+    },
+
+    /// Add an existing key
+    #[clap(alias = "a")]
+    Add {
+        /// Name for the key
+        name: String,
+        /// Secret key to add
+        secret_key: String,
+        /// Optional description
+        #[clap(long, short)]
+        description: Option<String>,
+        /// Set as default key
+        #[clap(long)]
+        default: bool,
+    },
+
+    /// Remove a key
+    #[clap(alias = "r")]
+    Remove {
+        /// Name of the key to remove
         name: String,
     },
 
-    /// Set or display the default key
-    Default {
-        /// The name of the key to set as default
-        name: Option<String>,
+    /// List all keys
+    #[clap(alias = "l")]
+    List {
+        /// Show secret keys (use with caution)
+        #[clap(long)]
+        show_secret: bool,
+
+        /// Show full key
+        #[clap(short, long)]
+        full: bool,
     },
 
-    /// List all keys
-    List,
+    /// Show key details
+    #[clap(alias = "s")]
+    Show {
+        /// Name of the key to show
+        name: String,
 
-    /// Remove a key
-    Remove {
-        /// The name of the key to remove
+        /// Show secret key (use with caution)
+        #[clap(long)]
+        show_secret: bool,
+    },
+
+    /// Set default key
+    #[clap(alias = "d")]
+    Default {
+        /// Name of the key to set as default
         name: String,
     },
 }

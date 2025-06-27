@@ -2,15 +2,21 @@
 name = "poof"
 version = "0.1.0"
 edition = "2024"
+repository = "https://github.com/cestef/poof"
+homepage = "https://github.com/cestef/poof"
+description = "Drop and catch files over iroh using a simple cli."
+license = "MIT"
 
 [dependencies]
 anyhow = "1.0.98"
 clap = { version = "4.5.40", features = ["derive"] }
+dashmap = "6.1.0"
 dirs = "6.0.0"
 facet = "0.27.15"
+facet-msgpack = "0.25.16"
 facet-pretty = "0.23.22"
 facet-toml = "0.25.16"
-inquire = "0.7.5"
+futures-lite = "2.6.0"
 iroh = { version = "0.35.0", features = ["discovery-local-network"] }
 iroh-blobs = "0.35.0"
 miette = { version = "7.6.0", features = ["fancy"] }
